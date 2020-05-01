@@ -33,9 +33,15 @@ RUN rm /bin/sh && \
     ln -s bash /bin/sh
 
 # Add non-root user for build yocto no permit build using root user
-RUN id build 2>/dev/null || useradd --uid 30000 --create-home build
+RUN id build 2>/dev/null || useradd --uid 424242 --create-home build
 RUN echo "build ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 
-USER build
-WORKDIR /home/build
-CMD "/bin/bash"
+COPY scripts/exec_at.sh scripts/entrypoint.sh /
+
+WORKDIR /bitbake
+
+VOLUME /bitbake
+
+ENTRYPOINT [ "/entrypoint.sh" ]
+
+CMD ["/bin/bash"]
